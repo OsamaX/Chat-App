@@ -1,0 +1,72 @@
+doctype html
+html
+  head
+    title Chat App
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    link(rel='stylesheet', type='text/css', href='css/style.css')
+    script(src='http://code.jquery.com/jquery-3.3.1.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+  body
+    .container
+      .row
+        .col-md-12.top
+          .panel.panel-primary
+            #accordion.panel-heading
+              span.glyphicon.glyphicon-comment
+              |  Chat
+              a.btn.btn-danger.logout(href="/logout") Log out
+              button.btn.btn-success.active(data-toggle="modal", data-target="#myModal") Active
+                | #{" "}  
+                span.badge.active_count 0
+                
+            #myModal.modal.fade(role='dialog')
+              .modal-dialog.modal-sm
+                .modal-content
+                  .modal-header
+                    button.close(type='button', data-dismiss='modal') ×
+                    h4.modal-title  Active Users
+                  .modal-body.users
+
+                  .modal-footer
+                    button.btn.btn-default(type='button', data-dismiss='modal') Close
+
+            #collapseOne.panel-collapse.collapse.in(aria-expanded='true', style='')
+              .panel-body#chat-body
+                ul.chat
+                  if msg.length != 0
+                      each val, i in msg
+                        if !val._creator
+                          -continue
+                        else
+                          if val._creator.user != name 
+                            li.left.clearfix
+                              span.chat-img.pull-left
+                                img.img-circle(src='http://placehold.it/50/55C1E7/fff&text=U', alt='User Avatar')
+                              .chat-body.clearfix
+                                .header
+                                  strong.primary-font=val._creator.user
+                                  small.pull-right.text-muted
+                                    span.glyphicon.glyphicon-time
+                                    | #{val.time}
+                                p=val.text  
+                          else
+                            li.right.clearfix
+                              span.chat-img.pull-right
+                                img.img-circle(src='http://placehold.it/50/FA6F57/fff&text=ME', alt='User Avatar')
+                              .chat-body.clearfix
+                                .header
+                                  small.text-muted
+                                    span.glyphicon.glyphicon-time
+                                    | #{val.time}
+                                  strong.pull-right.primary-font=val._creator.user
+                                p=val.text
+
+              .panel-footer
+                .input-group
+                  input#btn-input.form-control.input-sm(type='text', placeholder='Type your message here...')
+                  span.input-group-btn
+                    button#btn-chat.btn.btn-warning.btn-sm
+                      | Send
+    script(src="/socket.io/socket.io.js")
+    script(type='text/javascript', src='js/main.js')

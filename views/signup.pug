@@ -1,0 +1,26 @@
+doctype html
+html
+  head
+    title
+    link(rel='stylesheet', type='text/css', href='css/signup.css')
+    script(src="http://code.jquery.com/jquery-3.3.1.min.js")
+  body
+    .bold-line
+    .container
+      .window
+        if err
+          .alert.alert-danger.error
+            strong Error!
+            | #{" " +err}
+        .overlay
+        .content
+          .welcome Chat App!
+          .subtitle Before using the app you need to create an account.
+          .input-fields
+            form(action='/signup', method='POST', id="signup")
+              input.input-line.full-width(type='text', placeholder='Username', name='user', id="user")
+              input.input-line.full-width(type='password', placeholder='Password', name='password', id="password")
+              #signup
+                button.ghost-round.full-width Signup
+
+  script(src="js/main.js")
