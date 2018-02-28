@@ -4,7 +4,7 @@ socket.on("online", (active) => {
     $(".active_count").text(Object.keys(active).length)
     let html = "";
     for (let users in active) {
-        html += `<p class="active-name">${active[users]}<img class="green" src="img/green.png" /></p>`
+        html += `<p class="active-name">${active[users]}<img class="green" src="static/img/green.png" /></p>`
     }
     $(".users").html(html)
 })
