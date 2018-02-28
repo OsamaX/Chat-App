@@ -11,22 +11,20 @@ let userSchema = new mongoose.Schema({
     user: {type: String, trim: true, required: [true, "Name can't be blank"], set: function(user) {
         return user.toLowerCase();
     }, get: function(user) {
-        return user.charAt(0).toUpperCase() + user.slice(1)        
+        return user.charAt(0).toUpperCase() + user.slice(1)     
+
+    }, validate: {
+        isAsync: true,
+        validator: function(v, cb) {
+            User.count({user: v}, (err, count) => {
+                cb(count == 0)
+            })
+        }, msg: "User already exist"
     }},
+
     password: {type: String, required: [true, "Password can't be blank"]},
     messages: [{type: mongoose.Schema.Types.ObjectId, ref: "Chat"}]
 });
-
-userSchema.pre("save", function(next) {
-    let user = this;
-
-    bcrypt.hash(user.password, 10, (err, hash) => {
-        if (err) return next(err);
-
-        user.password = hash;
-        next();
-    })
-})
 
 userSchema.statics.authenticate = function(user, password, callback) {
     User.findOne({user: user}, function(error, user) {
@@ -50,6 +48,24 @@ userSchema.statics.authenticate = function(user, password, callback) {
     })
 
 }
+
+userSchema.pre("save", function(next) {
+    if (this.messages.length == 0) {
+        let user = this;
+
+        bcrypt.hash(user.password, 10, function(err, hash) {
+            if (err) {
+                return next(err)
+            } else {
+                user.password = hash;
+                next();
+            }
+        })
+    } else {
+        next();
+    }
+
+});
 
 let Chat = mongoose.model("Chat", chatSchema);
 let User = mongoose.model("User", userSchema);
