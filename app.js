@@ -6,9 +6,8 @@ let app = express();
 const server = require("http").createServer(app);
 const client = require("socket.io").listen(server);
 
-const mongouser = process.env.MONGODB_USER || "osama101";
-const mongopass = process.env.MONGODB_PASS || "assassin123";
-// `mongodb://${mongouser}:${mongopass}@ds249818.mlab.com:49818/chat`
+const mongouser = process.env.MONGODB_USER;
+const mongopass = process.env.MONGODB_PASS;
 
 //Creating connection to MongoDB
 mongoose.connect(`mongodb://${mongouser}:${mongopass}@ds249818.mlab.com:49818/chat`, (err) => {
@@ -31,7 +30,7 @@ let sessionMiddlewear = session({
 })
 sharedsession = require("express-socket.io-session");
 
-app.use(express.static(__dirname + "/public"))
+app.use("/static", express.static(__dirname + "/public"))
 
 
 app.set("view engine", "pug")
