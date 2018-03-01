@@ -1,4 +1,4 @@
-const express = require("express"), mongoose = require("mongoose"), bodyparser = require("body-parser"), session = require("express-session"), MongoStore = require("connect-mongo")(session), Entities = require('html-entities').XmlEntities;
+const express = require("express"), mongoose = require("mongoose"), bodyparser = require("body-parser"), session = require("express-session"), MongoStore = require("connect-mongo")(session), Entities = require('html-entities').XmlEntities, path = require("path");
 
 
 let app = express();
@@ -6,8 +6,8 @@ let app = express();
 const server = require("http").createServer(app);
 const client = require("socket.io").listen(server);
 
-const mongouser = process.env.MONGODB_USER;
-const mongopass = process.env.MONGODB_PASS;
+const mongouser = process.env.MONGODB_USER || "osama101";
+const mongopass = process.env.MONGODB_PASS || "assassin123";
 
 //Creating connection to MongoDB
 mongoose.connect(`mongodb://${mongouser}:${mongopass}@ds249818.mlab.com:49818/chat`, (err) => {
@@ -30,11 +30,12 @@ let sessionMiddlewear = session({
 })
 sharedsession = require("express-socket.io-session");
 
-app.use("/static", express.static(__dirname + "/public"))
-
-
 app.set("view engine", "pug")
+app.use(express.static(path.join(__dirname ,'views')))
+app.use("/static", express.static(path.join(__dirname + "/public")))
+
 app.set("NODE_ENV", process.env.NODE_ENV || "development")
+app.set("port", process.env.PORT || 8080);
 app.use(bodyparser.json())
 app.use(bodyparser.urlencoded({ extended: false }))
 
@@ -129,11 +130,10 @@ app.use((err, req, res, next) => {
         res.status(err.status)
         return next(err.msg || err)
     } else {
-        return res.send("<p>404 Not found</p>");
+        return res.send("404 Not found");
     }
 })
 
-app.set("port", process.env.PORT || 8080);
 
 server.listen(app.get("port"), () => {
     console.log(`Express server listening on port ${app.get('port')}`)
