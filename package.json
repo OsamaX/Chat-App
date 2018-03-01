@@ -11,7 +11,8 @@
     "express-session": "^1.15.6",
     "socket.io": "^2.0.4",
     "mongoose": "^5.0.4",
-    "bcrypt": "^1.0.3"
+    "bcrypt": "^1.0.3",
+    "socket.io-express-session": "^0.1.3"
   },
   "devDependencies": {},
   "scripts": {
