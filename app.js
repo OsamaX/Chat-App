@@ -129,7 +129,7 @@ app.use((err, req, res, next) => {
         res.status(err.status)
         return next(err.msg || err)
     } else {
-        return res.sendStatus(404).send(res.statusCode);
+        return res.send("<p>"+res.statusCode+"</p>");
     }
 })
 
