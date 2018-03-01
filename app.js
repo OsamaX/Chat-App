@@ -6,8 +6,8 @@ let app = express();
 const server = require("http").createServer(app);
 const client = require("socket.io").listen(server);
 
-const mongouser = process.env.MONGODB_USER || "osama101";
-const mongopass = process.env.MONGODB_PASS || "assassin123";
+const mongouser = process.env.MONGODB_USER;
+const mongopass = process.env.MONGODB_PASS;
 
 //Creating connection to MongoDB
 mongoose.connect(`mongodb://${mongouser}:${mongopass}@ds249818.mlab.com:49818/chat`, (err) => {
@@ -128,9 +128,10 @@ function getTime() {
 app.use((err, req, res, next) => {
     if (app.get("NODE_ENV") == "development") {
         res.status(err.status)
+        console.log("error")
         return next(err.msg || err)
     } else {
-        return res.send("404 Not found");
+        return res.send("<p>404 Not found</p>");
     }
 })
 
