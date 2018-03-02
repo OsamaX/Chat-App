@@ -113,77 +113,73 @@ client.on("connection", socket => {
 })
 
 //const routes = require("./routes")
-//app.use("/", routes)
+app.use("/", router)
 const middlewear = require("./middlewear")
 
-router.get("/". (req, res) => {
-    return res.send("HOME")
+router.get("/", middlewear.validateLogout, (req, res) => {
+    res.render("index")
 })
 
-// router.get("/", middlewear.validateLogout, (req, res) => {
-//     res.render("index")
-// })
+router.post("/signup", (req, res, next) => {
 
-// router.post("/signup", (req, res, next) => {
+    let { user, password } = req.body
+    user = entities.encode(user)
+    model.User.create({ user, password }, (err, user) => {
+        if (err) {
+            if (err.errors["user"]) return res.render("signup", { err: err.errors["user"].message })
+            if (err.errors["password"]) return res.render("signup", { err: err.errors["password"].message })
+        }
 
-//     let { user, password } = req.body
-//     user = entities.encode(user)
-//     model.User.create({ user, password }, (err, user) => {
-//         if (err) {
-//             if (err.errors["user"]) return res.render("signup", { err: err.errors["user"].message })
-//             if (err.errors["password"]) return res.render("signup", { err: err.errors["password"].message })
-//         }
+        req.session.user = user._id;
+        req.session.name = user.user;
+        res.redirect("/");
+    })
 
-//         req.session.user = user._id;
-//         req.session.name = user.user;
-//         res.redirect("/");
-//     })
+})
 
-// })
+router.post("/", (req, res) => {
+    let user_name = req.body.user.toLowerCase()
+    model.User.authenticate(user_name, req.body.password, (err, user) => {
+        if (err || !user) {
+            if (err == "User not found") return res.render("index", { err })
+            else if (err == "Incorrect password") return res.render("index", { err })
 
-// router.post("/", (req, res) => {
-//     let user_name = req.body.user.toLowerCase()
-//     model.User.authenticate(user_name, req.body.password, (err, user) => {
-//         if (err || !user) {
-//             if (err == "User not found") return res.render("index", { err })
-//             else if (err == "Incorrect password") return res.render("index", { err })
-
-//         } else {
+        } else {
             
-//             req.session.user = user._id;
-//             req.session.name = user.user;
-//             return res.redirect("/chat")
-//         }
+            req.session.user = user._id;
+            req.session.name = user.user;
+            return res.redirect("/chat")
+        }
 
-//     })
-// })
+    })
+})
 
-// router.get("/chat", middlewear.validateLogin, (req, res) => {
+router.get("/chat", middlewear.validateLogin, (req, res) => {
    
-//    model.Chat.find({}, '-_id -__v', {limit: 1000} ).populate({path: "_creator", select: "user -_id" }).exec((err, _user) => {
+   model.Chat.find({}, '-_id -__v', {limit: 1000} ).populate({path: "_creator", select: "user -_id" }).exec((err, _user) => {
 
-//         res.render("chat", {msg: _user})
-//    })
+        res.render("chat", {msg: _user})
+   })
 
-// })
+})
 
-// router.get("/signup", middlewear.validateLogout, (req, res) => res.render("signup"))
+router.get("/signup", middlewear.validateLogout, (req, res) => res.render("signup"))
 
-// router.get("/logout", (req, res, next) => {
-//     req.session.destroy((err) => {
-//         if (err) return next(err)
+router.get("/logout", (req, res, next) => {
+    req.session.destroy((err) => {
+        if (err) return next(err)
 
-//         res.redirect("/")
-//     })
+        res.redirect("/")
+    })
 
-// })
+})
 
-// router.all("*", (req, res, next) => {
-//     let err = {};
-//     err.msg = "404 Not found"
-//     err.status = 404
-//     return next(err);
-// })
+router.all("*", (req, res, next) => {
+    let err = {};
+    err.msg = "404 Not found"
+    err.status = 404
+    return next(err);
+})
 
 
 function getTime() {
