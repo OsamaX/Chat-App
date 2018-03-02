@@ -116,13 +116,9 @@ client.on("connection", socket => {
 //app.use("/", routes)
 const middlewear = require("./middlewear")
 
-router.get("/", (req, res) => {
-    return res.send("HOME")
+router.get("/", middlewear.validateLogout, (req, res) => {
+    res.render("index")
 })
-
-// router.get("/", middlewear.validateLogout, (req, res) => {
-//     res.render("index")
-// })
 
 router.post("/signup", (req, res, next) => {
 
