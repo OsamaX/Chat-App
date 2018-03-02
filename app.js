@@ -33,7 +33,7 @@ sharedsession = require("express-socket.io-session");
 
 app.set("view engine", "pug")
 app.use(express.static(path.join(__dirname ,'views')))
-app.use("/static", express.static(path.join(__dirname + "/public")))
+//app.use("/static", express.static(path.join(__dirname + "/public")))
 
 app.set("NODE_ENV", process.env.NODE_ENV || "development")
 app.set("port", process.env.PORT || 8080);
@@ -117,7 +117,7 @@ client.on("connection", socket => {
 const middlewear = require("./middlewear")
 
 app.get("/", (req, res) => {
-    return res.render("index")
+    return res.render("test")
 })
 
 // router.get("/", middlewear.validateLogout, (req, res) => {
