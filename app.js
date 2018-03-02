@@ -117,7 +117,7 @@ client.on("connection", socket => {
 const middlewear = require("./middlewear")
 
 app.get("/", (req, res) => {
-    res.render("index")
+    return res.render("index")
 })
 
 // router.get("/", middlewear.validateLogout, (req, res) => {
@@ -195,15 +195,15 @@ function getTime() {
     return v.join(":") + state
 }
 
-app.use((err, req, res, next) => {
-    if (app.get("NODE_ENV") == "development") {
-        res.status(err.status)
-        console.log("error")
-        return next(err.msg || err)
-    } else {
-        return res.send("<p>404 Not found</p>");
-    }
-})
+// app.use((err, req, res, next) => {
+//     if (app.get("NODE_ENV") == "development") {
+//         res.status(err.status)
+//         console.log("error")
+//         return next(err.msg || err)
+//     } else {
+//         return res.send("<p>404 Not found</p>");
+//     }
+// })
 
 
 server.listen(app.get("port"), () => {
