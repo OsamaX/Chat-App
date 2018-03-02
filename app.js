@@ -2,7 +2,7 @@ const express = require("express"), mongoose = require("mongoose"), bodyparser =
 
 
 let app = express();
-let router = express().Router();
+let router = express.Router();
 
 const server = require("http").createServer(app);
 const client = require("socket.io").listen(server);
