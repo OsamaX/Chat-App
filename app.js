@@ -117,7 +117,7 @@ client.on("connection", socket => {
 const middlewear = require("./middlewear")
 
 app.get("/", (req, res) => {
-    return res.render("test")
+    res.render("test")
 })
 
 // router.get("/", middlewear.validateLogout, (req, res) => {
