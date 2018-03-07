@@ -57,8 +57,14 @@ let clients = {}
 client.on("connection", socket => {
     let session = socket.handshake.session;
 
-    if (session.name) {
+    socket.join("default")
+    socket.join(session.name)
+
+    let user_occurrence = Object.keys(client.sockets.adapter.rooms[session.name].sockets).length
+
+    if (session.name && user_occurrence == 1) {
         clients[socket.id] = session.name.charAt(0).toUpperCase() + session.name.slice(1)
+        socketIds[session.name] = socket.id
     }
 
     client.sockets.emit("online", clients)
@@ -81,13 +87,18 @@ client.on("connection", socket => {
 
                     model.Chat.findOne({}, '-_id -__v', {sort:{"_id": "-1"}, limit: 1} ).populate({ path: "_creator", select: "user -_id" }).exec((err, _user) => {
 
-                        let user = _user.toObject({getters : true});
+                        let user = _user.toObject({getters : true})
+                        let usersInRoom = Object.keys(client.sockets.adapter.rooms[session.name].sockets)
+                        let userInDefault = Object.keys(client.sockets.adapter.rooms["default"].sockets)
 
                         if (session.name == user._creator.user) {
-                            socket.emit("yours",  user)
-                        }
 
-                        socket.broadcast.emit('their', user);
+                            client.in(session.name).emit("yours",  user)
+
+                        }
+                        console.log(usersInRoom.length)
+                        if (usersInRoom.length > 1) handleSameUsers(userInDefault, usersInRoom, user)
+                        else socket.to("default").emit("their",  user)
 
                     })
 
@@ -114,6 +125,13 @@ client.on("connection", socket => {
 const routes = require("./routes")
 app.use("/", routes)
 
+function handleSameUsers(userInDefault, usersInRoom, user) {
+    for (let i = 0; i < userInDefault.length; i++) {
+        if (usersInRoom.indexOf(userInDefault[i]) == -1) {
+            client.sockets.sockets[userInDefault[i]].emit("their", user)
+        } 
+    }
+}
 
 function getTime() {
     let _time = new Date().toLocaleString().split(",")[1]
