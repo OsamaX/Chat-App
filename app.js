@@ -64,7 +64,6 @@ client.on("connection", socket => {
 
     if (session.name && user_occurrence == 1) {
         clients[socket.id] = session.name.charAt(0).toUpperCase() + session.name.slice(1)
-        socketIds[session.name] = socket.id
     }
 
     client.sockets.emit("online", clients)
